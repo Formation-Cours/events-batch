@@ -5,3 +5,8 @@ GET http://localhost:8080/import-events
 ###
 
 GET http://localhost:8080/import-events-fast
+
+###
+
+GET http://localhost:8080/job-history
+

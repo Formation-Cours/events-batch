@@ -33,12 +33,16 @@ public class OpenAgendaEventProcessor implements ItemProcessor<OpenAgendaDTO, Ev
     }
 
     EventEntity event = new EventEntity();
-    event.setTitle(item.getTitle());
+
+    event.setTitle(cleanAndValidateString(item.getTitle()));
+
     if (item.getDescription() != null && item.getDescription().length() > 1000) {
       event.setDescription(item.getDescription().substring(0, 997) + "...");
     } else {
       event.setDescription(item.getDescription());
     }
+
+    event.setDescription(cleanAndValidateString(event.getDescription()));
 
     event.setStartDate(parseDateTime(item.getFirstDateBegin()));
     if (event.getStartDate() == null) {
@@ -68,4 +72,18 @@ public class OpenAgendaEventProcessor implements ItemProcessor<OpenAgendaDTO, Ev
 
   }
 
+  private String cleanAndValidateString(String input) {
+    if (input == null)
+      return null;
+
+    // Supprime les caractères null et autres caractères de contrôle problématiques
+    String cleaned = input.replaceAll("[\u0000-\u001F\u007F-\u009F]", "");
+
+    // Log si on a trouvé des caractères suspects
+    // if (!cleaned.equals(input)) {
+    // logger.warn("Caractères suspects supprimés de: {}", input);
+    // }
+
+    return cleaned;
+  }
 }

@@ -3,13 +3,21 @@ spring:
     name: events-batch
 
   datasource:
-    url: "jdbc:h2:mem:events-batch"
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: ""
+    # url: "jdbc:h2:mem:events-batch"
+    # driver-class-name: org.h2.Driver
+    # username: sa
+    # password: ""
+    url: "jdbc:postgresql://localhost:5432/events-batch"
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: samsamsam
+  sql:
+    init:
+      mode: always
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    # database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: false
@@ -19,25 +27,11 @@ spring:
 
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
 
   batch:
     job:
       enabled: false
-# spring.application.name=events-batch
-#
-# spring.datasource.url=jdbc:h2:mem:events-batch
-# spring.datasource.driver-class-name=org.h2.Driver
-# spring.datasource.username=sa
-# spring.datasource.password=
-#
-# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-# spring.jpa.hibernate.ddl-auto=create-drop
-# spring.jpa.show-sql=true
-# spring.jpa.properties.hibernate.format_sql=true
-#
-# spring.h2.console.enabled=true
-# spring.h2.console.path=/h2-console
-#
-# spring.batch.job.enabled=false
+    jdbc:
+      initialize-schema: always

@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+*.json
+*.csv
+node_modules
+
+.DS_Store

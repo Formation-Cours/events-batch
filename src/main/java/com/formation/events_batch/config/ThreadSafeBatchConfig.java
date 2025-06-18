@@ -36,7 +36,7 @@ public class ThreadSafeBatchConfig {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(4);
     executor.setMaxPoolSize(8);
-    executor.setQueueCapacity(100);
+    executor.setQueueCapacity(10);
     executor.setThreadNamePrefix("batch-");
     executor.setWaitForTasksToCompleteOnShutdown(true);
     executor.setAwaitTerminationSeconds(60);
