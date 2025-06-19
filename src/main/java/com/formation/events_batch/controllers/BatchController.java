@@ -19,6 +19,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -35,64 +36,56 @@ public class BatchController {
   @Qualifier("optimizedImportEventJob")
   private final Job optimizedImportEventJob;
 
+  @Qualifier("importUserJob")
+  private final Job importUserJob;
+
+  // public BatchController(JobLauncher jobLauncher,
+  // @Qualifier("importEventJob") Job importEventJob,
+  // @Qualifier("optimizedImportEventJob") Job optimizedImportEventJob,
+  // @Qualifier("importUserJob") Job importUserJob,
+  // JobExplorer jobExplorer) {
+  // this.jobLauncher = jobLauncher;
+  // this.importEventJob = importEventJob;
+  // this.optimizedImportEventJob = optimizedImportEventJob;
+  // this.importUserJob = importUserJob;
+  // this.jobExplorer = jobExplorer;
+  // }
+
   private final JobExplorer jobExplorer;
+
+  /*
+    
+    
+    
+    
+   */
 
   @GetMapping("/import-events")
   public ResponseEntity<Map<String, Object>> importEvents() {
-    Map<String, Object> response = new HashMap<>();
-
-    try {
-      JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
-          .toJobParameters();
-
-      JobExecution jobExecution = jobLauncher.run(importEventJob, jobParameters);
-      if (jobExecution.getStatus() == BatchStatus.FAILED) {
-        response.put("Status", "ERROR");
-        response.put("message", "Failed to start import job: " + jobExecution.getJobInstance());
-        return ResponseEntity.internalServerError().body(response);
-      }
-
-      response.put("Status", "SUCCESS");
-      response.put("message", "Import job started successfully.");
-      return ResponseEntity.ok(response);
-
-    } catch (Exception e) {
-      response.put("Status", "ERROR");
-      response.put("message", "Failed to start import job: " + e.getMessage());
-      return ResponseEntity.internalServerError().body(response);
-    }
+    return getResponse(importEventJob);
   }
 
   @GetMapping("/import-events-fast")
   public ResponseEntity<Map<String, Object>> optimizedImportEvents() {
-    Map<String, Object> response = new HashMap<>();
-
-    try {
-      JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
-          .toJobParameters();
-
-      JobExecution jobExecution = jobLauncher.run(optimizedImportEventJob, jobParameters);
-      if (jobExecution.getStatus() == BatchStatus.FAILED) {
-        response.put("Status", "ERROR");
-        response.put("message", "Failed to start import job: " + jobExecution.getJobInstance());
-        return ResponseEntity.internalServerError().body(response);
-      }
-
-      response.put("Status", "SUCCESS");
-      response.put("message", "Import job started successfully.");
-      return ResponseEntity.ok(response);
-
-    } catch (Exception e) {
-      response.put("Status", "ERROR");
-      response.put("message", "Failed to start import job: " + e.getMessage());
-      return ResponseEntity.internalServerError().body(response);
-    }
+    return getResponse(optimizedImportEventJob);
   }
 
-  @GetMapping("/job-history")
-  public ResponseEntity<List<Map<String, Object>>> getJobHistory() {
+  @GetMapping("/import-users")
+  public ResponseEntity<Map<String, Object>> importUsers() {
+    return getResponse(importUserJob);
+  }
+
+  /*
+  
+  
+  
+  
+  */
+
+  @GetMapping("/job-history/{job}")
+  public ResponseEntity<List<Map<String, Object>>> getJobHistory(@PathVariable String job) {
     try {
-      List<JobExecution> jobExecutions = jobExplorer.findJobInstancesByJobName("optimizedImportEventJob", 0, 10)
+      List<JobExecution> jobExecutions = jobExplorer.findJobInstancesByJobName(job, 0, 10)
           .stream()
           .flatMap(instance -> jobExplorer.getJobExecutions(instance).stream())
           .toList();
@@ -130,6 +123,31 @@ public class BatchController {
       return ResponseEntity.ok(history);
     } catch (Exception e) {
       return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  private ResponseEntity<Map<String, Object>> getResponse(Job job) {
+    Map<String, Object> response = new HashMap<>();
+
+    try {
+      JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
+          .toJobParameters();
+
+      JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+      if (jobExecution.getStatus() == BatchStatus.FAILED) {
+        response.put("Status", "ERROR");
+        response.put("message", "Failed to start import job: " + jobExecution.getJobInstance());
+        return ResponseEntity.internalServerError().body(response);
+      }
+
+      response.put("Status", "SUCCESS");
+      response.put("message", "Import job started successfully.");
+      return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+      response.put("Status", "ERROR");
+      response.put("message", "Failed to start import job: " + e.getMessage());
+      return ResponseEntity.internalServerError().body(response);
     }
   }
 

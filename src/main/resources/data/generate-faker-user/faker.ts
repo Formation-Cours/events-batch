@@ -68,7 +68,7 @@ const writeFile = (path: string, lineNumber: number) => {
   console.log("Nettoyage des doublons d'emails")
   const cleanList = clean(listUsers);
 
-  const firsLine = `firstName,lastName,email,password,emailVerified,dateInscription,avatar,streetAddress,city,country;`
+  const firsLine = `firstName,lastName,email,password,emailVerified,dateInscription,avatar,streetAddress,city,country`
 
   console.log("Démarrage de la génération d'un tableau de string!")
   const userTabStr = cleanList.map((user) => {
@@ -86,7 +86,7 @@ const writeFile = (path: string, lineNumber: number) => {
   }
 }
 
-writeFile('../users.csv', 10_000_000);
+writeFile('../users.csv', 1_000_000);
 // writeFile('../users.csv', 10);
 
 // bun faker.ts

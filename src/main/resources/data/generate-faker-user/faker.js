@@ -59,6 +59,6 @@ var writeFile = function (path, lineNumber) {
         console.error('err: ', err);
     }
 };
-writeFile('../users.csv', 10000000);
+writeFile('../users.csv', 1000);
 // writeFile('../users.csv', 10);
 // bun faker.ts
