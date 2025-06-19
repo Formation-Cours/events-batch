@@ -12,5 +12,13 @@ GET http://localhost:8080/import-users
 
 ###
 
-GET http://localhost:8080/job-history
+GET http://localhost:8080/import-users/synchronized
+
+###
+
+GET http://localhost:8080/import-users/partitioned
+
+###
+
+GET http://localhost:8080/job-history/importUserJob
 

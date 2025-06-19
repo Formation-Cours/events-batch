@@ -39,17 +39,11 @@ public class BatchController {
   @Qualifier("importUserJob")
   private final Job importUserJob;
 
-  // public BatchController(JobLauncher jobLauncher,
-  // @Qualifier("importEventJob") Job importEventJob,
-  // @Qualifier("optimizedImportEventJob") Job optimizedImportEventJob,
-  // @Qualifier("importUserJob") Job importUserJob,
-  // JobExplorer jobExplorer) {
-  // this.jobLauncher = jobLauncher;
-  // this.importEventJob = importEventJob;
-  // this.optimizedImportEventJob = optimizedImportEventJob;
-  // this.importUserJob = importUserJob;
-  // this.jobExplorer = jobExplorer;
-  // }
+  @Qualifier("synchronizedImportUserJob")
+  private final Job synchronizedImportUserJob;
+
+  @Qualifier("partitionedImportUserJob")
+  private final Job partitionedImportUserJob;
 
   private final JobExplorer jobExplorer;
 
@@ -73,6 +67,16 @@ public class BatchController {
   @GetMapping("/import-users")
   public ResponseEntity<Map<String, Object>> importUsers() {
     return getResponse(importUserJob);
+  }
+
+  @GetMapping("/import-users/synchronized")
+  public ResponseEntity<Map<String, Object>> synchronizedImportUsers() {
+    return getResponse(synchronizedImportUserJob);
+  }
+
+  @GetMapping("/import-users/partitioned")
+  public ResponseEntity<Map<String, Object>> partitionedImportUsers() {
+    return getResponse(partitionedImportUserJob);
   }
 
   /*
