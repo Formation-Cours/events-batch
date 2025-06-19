@@ -153,7 +153,7 @@ public class BatchUserconfig {
         .partitioner("userPartitionStep", userItemPartition)
         .step(userPartitionStep(jobRepository, platformTransactionManager))
         .taskExecutor(userTaskExecutor())
-        .gridSize(10)
+        .gridSize(4)
         .build();
   }
 

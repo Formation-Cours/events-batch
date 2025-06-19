@@ -22,3 +22,7 @@ GET http://localhost:8080/import-users/partitioned
 
 GET http://localhost:8080/job-history/importUserJob
 
+###
+
+GET http://localhost:8080/job-history/partitionedImportUserJob
+

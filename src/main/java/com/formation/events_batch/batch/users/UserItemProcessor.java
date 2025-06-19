@@ -1,9 +1,8 @@
 package com.formation.events_batch.batch.users;
 
-import org.apache.catalina.User;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.formation.events_batch.dto.UserCsvDTO;
 import com.formation.events_batch.entities.UserEntity;
@@ -13,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class UserItemProcessor implements ItemProcessor<UserCsvDTO, UserEntity> {
+
+  private final PasswordEncoder passwordEncoder;
+
   @Override
   public UserEntity process(UserCsvDTO item) throws Exception {
     if (!isValid(item)) {
@@ -22,6 +24,7 @@ public class UserItemProcessor implements ItemProcessor<UserCsvDTO, UserEntity> 
     UserEntity user = new UserEntity();
     user.setEmail(item.getEmail());
     // ne pas oublier de le chiffrer
+    // user.setPassword(passwordEncoder.encode(item.getPassword()));
     user.setPassword(item.getPassword());
     user.setFirstName(item.getFirstName());
     user.setLastName(item.getLastName());

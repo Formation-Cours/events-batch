@@ -1,6 +1,9 @@
 spring:
   application:
     name: events-batch
+  profiles:
+    active:
+      - dev
 
   datasource:
     # url: "jdbc:h2:mem:events-batch"
