@@ -28,8 +28,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BatchController {
 
-  private final JobLauncher jobLauncher;
-
   @Qualifier("importEventJob")
   private final Job importEventJob;
 
@@ -47,6 +45,8 @@ public class BatchController {
 
   private final JobExplorer jobExplorer;
 
+  private final ResponseController responseController;
+
   /*
     
     
@@ -56,27 +56,27 @@ public class BatchController {
 
   @GetMapping("/import-events")
   public ResponseEntity<Map<String, Object>> importEvents() {
-    return getResponse(importEventJob);
+    return responseController.getResponse(importEventJob);
   }
 
   @GetMapping("/import-events-fast")
   public ResponseEntity<Map<String, Object>> optimizedImportEvents() {
-    return getResponse(optimizedImportEventJob);
+    return responseController.getResponse(optimizedImportEventJob);
   }
 
   @GetMapping("/import-users")
   public ResponseEntity<Map<String, Object>> importUsers() {
-    return getResponse(importUserJob);
+    return responseController.getResponse(importUserJob);
   }
 
   @GetMapping("/import-users/synchronized")
   public ResponseEntity<Map<String, Object>> synchronizedImportUsers() {
-    return getResponse(synchronizedImportUserJob);
+    return responseController.getResponse(synchronizedImportUserJob);
   }
 
   @GetMapping("/import-users/partitioned")
   public ResponseEntity<Map<String, Object>> partitionedImportUsers() {
-    return getResponse(partitionedImportUserJob);
+    return responseController.getResponse(partitionedImportUserJob);
   }
 
   /*
@@ -127,31 +127,6 @@ public class BatchController {
       return ResponseEntity.ok(history);
     } catch (Exception e) {
       return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  private ResponseEntity<Map<String, Object>> getResponse(Job job) {
-    Map<String, Object> response = new HashMap<>();
-
-    try {
-      JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
-          .toJobParameters();
-
-      JobExecution jobExecution = jobLauncher.run(job, jobParameters);
-      if (jobExecution.getStatus() == BatchStatus.FAILED) {
-        response.put("Status", "ERROR");
-        response.put("message", "Failed to start import job: " + jobExecution.getJobInstance());
-        return ResponseEntity.internalServerError().body(response);
-      }
-
-      response.put("Status", "SUCCESS");
-      response.put("message", "Import job started successfully.");
-      return ResponseEntity.ok(response);
-
-    } catch (Exception e) {
-      response.put("Status", "ERROR");
-      response.put("message", "Failed to start import job: " + e.getMessage());
-      return ResponseEntity.internalServerError().body(response);
     }
   }
 

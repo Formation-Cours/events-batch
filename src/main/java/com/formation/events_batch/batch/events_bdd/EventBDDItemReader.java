@@ -6,25 +6,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.formation.events_batch.dto.EventBddDTO;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class EventBDDItemReader {
 
   private final DataSource dataSource;
+  private static long readCount = 0;
+
   private static final Logger logger = LoggerFactory.getLogger(EventBDDItemReader.class);
 
-  @Bean
-  JdbcCursorItemReader<EventBddDTO> eventItemReader() {
-    String sql = "SELECT id, title, description, start_date, end_date, location, max_participants, organizer_id, created_date, modified_date FROM events";
+  public JdbcCursorItemReader<EventBddDTO> eventItemReader() {
+    String sql = "SELECT id, title, description, start_date, end_date, location, max_participants, organizer_id, created_date, modified_date FROM events ORDER BY id";
 
     return new JdbcCursorItemReaderBuilder<EventBddDTO>()
         .name("eventBddReader")
@@ -41,7 +39,9 @@ public class EventBDDItemReader {
       try {
         EventBddDTO dto = new EventBddDTO();
         dto.setId(rs.getLong("id"));
-        dto.setTitle(rs.getString("title"));
+
+        dto.setTitle(cleanAndTruncateText(rs.getString("title"), 1000));
+
         dto.setDescription(cleanAndTruncateText(rs.getString("description"), 1000));
 
         if (rs.getTimestamp("start_date") != null) {
@@ -52,7 +52,7 @@ public class EventBDDItemReader {
           dto.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
         }
 
-        dto.setLocation(rs.getString("location"));
+        dto.setLocation(cleanAndTruncateText(rs.getString("location"), 1000));
 
         dto.setMaxParticipants(rs.getInt("max_participants"));
 
@@ -66,7 +66,10 @@ public class EventBDDItemReader {
           dto.setModifiedDate(rs.getTimestamp("modified_date").toLocalDateTime());
         }
 
-        logger.info("Recuperation de la dto: {}", dto.getId());
+        readCount++;
+        if (readCount % 10000 == 0) {
+          logger.info("Lignes lues: {}, Derniere ID: {}", readCount, dto.getId());
+        }
         return dto;
 
       } catch (Exception e) {

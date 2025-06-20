@@ -3,7 +3,6 @@ package com.formation.events_batch.batch.events_bdd;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,19 +11,15 @@ import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.LineAggregator;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.stereotype.Component;
 
 import com.formation.events_batch.dto.EventBddDTO;
 
-@Component
 public class EventBDDItemWriter {
 
   private static final Logger logger = LoggerFactory.getLogger(EventBDDItemWriter.class);
 
-  @Bean
-  FlatFileItemWriter<EventBddDTO> eventItemWriter() {
+  public FlatFileItemWriter<EventBddDTO> eventItemWriter() {
     File outputDir = new File("output");
     if (!outputDir.exists()) {
       boolean created = outputDir.mkdirs();
@@ -46,7 +41,6 @@ public class EventBDDItemWriter {
         .lineAggregator(lineAggregator())
         .footerCallback(writer -> logger.info("Csv export completed"))
         .build();
-
   }
 
   private LineAggregator<EventBddDTO> lineAggregator() {
@@ -56,9 +50,13 @@ public class EventBDDItemWriter {
 
     BeanWrapperFieldExtractor<EventBddDTO> fieldExtractor = new BeanWrapperFieldExtractor<>();
     fieldExtractor.setNames(new String[] {
-        "id", "title", "description", "start_date", "end_date", "location", "max_participants", "organizer_id",
-        "created_date", "modified_date"
+        "id", "title", "description", "startDate", "endDate", "location",
+        "maxParticipants", "organizerID",
+        "createdDate", "modifiedDate"
     });
+
+    // String[] fieldNames = new Test<>().getFields(EventBddDTO.class);
+    // fieldExtractor.setNames(fieldNames);
 
     agg.setFieldExtractor(fieldExtractor);
 

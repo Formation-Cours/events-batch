@@ -30,7 +30,7 @@ GET {{path}}/import-users/partitioned
 ### ----------- Exportation d'events en CSV -----------
 ###
 
-GET {{path}}/export-events/csv
+GET {{path}}/export-events/simple
 
 ###
 
