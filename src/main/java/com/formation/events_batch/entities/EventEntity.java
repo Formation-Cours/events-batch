@@ -4,37 +4,24 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 // lombok
 @Data
+@EqualsAndHashCode(callSuper = true)
 // jpa
 @Entity
 @Table(name = "events")
-@EntityListeners(AuditingEntityListener.class)
-public class EventEntity {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class EventEntity extends SuperClass {
 
   @Column(nullable = false)
   private String title;
@@ -61,12 +48,6 @@ public class EventEntity {
   @JoinTable(name = "event_participants", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
   @ToString.Exclude
   private List<UserEntity> participants = new ArrayList<>();
-
-  @CreatedDate
-  private LocalDateTime createdDate;
-
-  @LastModifiedDate
-  private LocalDateTime modifiedDate;
 
   // @CreatedBy
   // private UserEntity createdBy;

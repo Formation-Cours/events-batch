@@ -4,8 +4,12 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;
 
@@ -13,6 +17,7 @@ import com.formation.events_batch.dto.EventBddDTO;
 
 import lombok.RequiredArgsConstructor;
 
+@Configuration
 @RequiredArgsConstructor
 public class EventBDDItemReader {
 
@@ -21,8 +26,18 @@ public class EventBDDItemReader {
 
   private static final Logger logger = LoggerFactory.getLogger(EventBDDItemReader.class);
 
-  public JdbcCursorItemReader<EventBddDTO> eventItemReader() {
-    String sql = "SELECT id, title, description, start_date, end_date, location, max_participants, organizer_id, created_date, modified_date FROM events ORDER BY id";
+  @Bean("stepScopeEventBDDItemReader")
+  @StepScope
+  public JdbcCursorItemReader<EventBddDTO> eventItemReader(
+      @Value("#{stepExecutionContext['whereClause']}") String whereClause,
+      @Value("#{stepExecutionContext['partitionName']}") String partitionName) {
+
+    String sql = "SELECT id, title, description, start_date, end_date, location, max_participants, organizer_id, created_date, modified_date FROM events "
+        + (whereClause == null ? "" : whereClause + " ") + "ORDER BY id";
+
+    logger.error("{}", sql);
+
+    logger.info("Creation d'un simple reader, partition: {}, whereClause: {}", partitionName, whereClause);
 
     return new JdbcCursorItemReaderBuilder<EventBddDTO>()
         .name("eventBddReader")
@@ -30,6 +45,7 @@ public class EventBDDItemReader {
         .sql(sql)
         .rowMapper(rowMapper())
         .fetchSize(10_000)
+        // .saveState(false)
         .build();
   }
 
