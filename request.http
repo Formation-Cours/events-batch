@@ -1,28 +1,55 @@
 ###
 
-GET http://localhost:8080/import-events
+@path=http://localhost:8080
+
+###
+### ----------- Importation des events JSON to BDD -----------
+###
+
+GET {{path}}/import-events
 
 ###
 
-GET http://localhost:8080/import-events-fast
+GET {{path}}/import-events-fast
+
+###
+### ----------- Importation des users CSV to BDD -----------
+###
+
+GET {{path}}/import-users
 
 ###
 
-GET http://localhost:8080/import-users
+GET {{path}}/import-users/synchronized
 
 ###
 
-GET http://localhost:8080/import-users/synchronized
+GET {{path}}/import-users/partitioned
+
+###
+### ----------- Exportation d'events en CSV -----------
+###
+
+GET {{path}}/export-events/csv
 
 ###
 
-GET http://localhost:8080/import-users/partitioned
+GET {{path}}/export-events/csv-by-id
 
 ###
 
-GET http://localhost:8080/job-history/importUserJob
+GET {{path}}/export-events/csv-by-year
+
+###
+### ----------- Job History -----------
+###
+
+GET {{path}}/job-history/importUserJob
 
 ###
 
-GET http://localhost:8080/job-history/partitionedImportUserJob
+GET {{path}}/job-history/partitionedImportUserJob
 
+###
+
+GET {{path}}/job-history/exportEventsPartitionedJob

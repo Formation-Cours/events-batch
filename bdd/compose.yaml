@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: arm64v8/postgres:16-alpine
+    container_name: postgres_studio
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-events-batch}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-samsamsam}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    deploy:
+      resources:
+        limits:
+          memory: 24G
+          cpus: "8.0"
+    shm_size: 2gb
+
+volumes:
+  postgres_data:
