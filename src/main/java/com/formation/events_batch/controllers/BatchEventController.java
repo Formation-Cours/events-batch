@@ -17,11 +17,19 @@ public class BatchEventController {
   @Qualifier("simpleEventJob")
   private final Job simpleEventJob;
 
+  @Qualifier("partitionEventJob")
+  private final Job partitionEventJob;
+
   private final ResponseController responseController;
 
   @GetMapping("/export-events/simple")
   public ResponseEntity<Map<String, Object>> exportSimpleCSV() {
     return responseController.getResponse(simpleEventJob);
+  }
+
+  @GetMapping("/export-events/partitioned")
+  public ResponseEntity<Map<String, Object>> exportPartitionerCSV() {
+    return responseController.getResponse(partitionEventJob);
   }
 
 }

@@ -34,11 +34,7 @@ GET {{path}}/export-events/simple
 
 ###
 
-GET {{path}}/export-events/csv-by-id
-
-###
-
-GET {{path}}/export-events/csv-by-year
+GET {{path}}/export-events/partitioned
 
 ###
 ### ----------- Job History -----------
