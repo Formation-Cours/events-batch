@@ -37,3 +37,11 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
+app:
+  batch:
+    file:
+      output: ${OUTPUT_YEAR:output_year}
+    years:
+      - 2017
+      - 2019
+      - 2024

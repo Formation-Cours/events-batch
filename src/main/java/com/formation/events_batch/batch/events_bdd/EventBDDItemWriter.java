@@ -41,7 +41,7 @@ public class EventBDDItemWriter {
       fileName = outputFilename;
       logger.info("Le fichier output se nomme: {} et a pour partition: {}", outputFilename, partitionName);
     } else {
-      DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+      DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm");
       fileName = "output/events_" + date.format(LocalDateTime.now()) + ".csv";
     }
 

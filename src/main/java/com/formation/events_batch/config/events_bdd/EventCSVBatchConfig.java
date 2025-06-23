@@ -1,5 +1,7 @@
 package com.formation.events_batch.config.events_bdd;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,9 +15,11 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -29,6 +33,12 @@ public class EventCSVBatchConfig {
 
   private final JobRepository jobRepository;
   private final PlatformTransactionManager transactionManager;
+
+  @Value("${app.batch.file.output}")
+  private String outputByYear;
+
+  // @Value("${app.batch.years}")
+  // private Integer[] years;
 
   /*
    * ------------ Simple Export Event ------------
@@ -80,14 +90,16 @@ public class EventCSVBatchConfig {
     return gridSize -> {
       Map<String, ExecutionContext> partitions = new HashMap<>();
 
-      int[] years = { 2021, 2022, 2023, 2024, 2025 };
+      int[] years = { 2021, 2022 };
 
       for (int i = 0; i < years.length; i++) {
         ExecutionContext context = new ExecutionContext();
         int year = years[i];
 
         context.putString("whereClause", "WHERE EXTRACT(YEAR FROM start_date) = " + year);
-        context.putString("outputFilename", "output/events_year_" + year + ".csv");
+        DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm");
+        context.putString("outputFilename",
+            outputByYear + "/events_year_" + year + "_" + date.format(LocalDateTime.now()) + ".csv");
         context.putString("partitionName", "year_" + year);
 
         partitions.put("partition_year_" + year, context);
